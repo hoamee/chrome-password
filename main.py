@@ -1,10 +1,17 @@
 import os
+import sys
 import json
 import base64
 import sqlite3
 import win32crypt
 from Crypto.Cipher import AES
 import shutil
+
+argvs = sys.argv
+loc = ""
+for i in range(len(argvs)):
+    if argvs[i] == "-f":
+        loc = argvs[i+1]
 
 def get_master_key():
     with open(os.environ['USERPROFILE'] + os.sep + r'AppData\Local\Google\Chrome\User Data\Local State', "r") as f:
@@ -36,7 +43,7 @@ def decrypt_password(buff, master_key):
 
 
 master_key = get_master_key()
-login_db = os.environ['USERPROFILE'] + os.sep + r'AppData\Local\Google\Chrome\User Data\default\Login Data'
+login_db = loc
 shutil.copy2(login_db, "Loginvault.db") #making a temp copy since Login Data DB is locked while Chrome is running
 conn = sqlite3.connect("Loginvault.db")
 cursor = conn.cursor()
